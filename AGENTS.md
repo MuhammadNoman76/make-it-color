@@ -31,7 +31,8 @@ then the GPU, then the CPU. It also restores them: brightness/contrast fix (`Cor
   (ModelScope's DDColor code, Apache 2.0), `enhance.py` (Real-ESRGAN checkpoints → enhancer ONNX + check files).
 - `src/MakeItColor/Models/`: the enhancer ONNX files (2.4 MB fp16, 4.9 MB fp32), shipped in the app's `models` folder.
 - `installer/MakeItColor.iss`, `build.ps1`, `tools/get-ffmpeg.ps1`, `vendor/ffmpeg/` (binaries git-ignored).
-- `release/`: the published installers plus `SHA256SUMS.txt`. Download links point here.
+- Installers are not in the repo: they are assets of the GitHub release `v<version>` (the x64 one is over GitHub's
+  100 MB limit for repo files; release assets may be up to 2 GB). Download links and the update feed point there.
 - `.work/` (git-ignored): Python venvs, checkpoint, test images and videos, scratch scripts.
 
 ## Model files
@@ -64,8 +65,8 @@ then the GPU, then the CPU. It also restores them: brightness/contrast fix (`Cor
 1. Bump `<Version>` in `src/MakeItColor/MakeItColor.csproj`.
 2. `powershell -ExecutionPolicy Bypass -File build.ps1 -Version X.Y.Z` (x64 and arm64). .NET SDK:
    `%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe`; Inno Setup 6: `%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`.
-3. Copy `dist\*.exe` and `dist\SHA256SUMS.txt` into `release/`. Each installer must stay under 100 MB.
-4. Commit and push this repo first, so the download links exist.
+3. Commit and push, then create the GitHub release `vX.Y.Z` with `dist\*.exe` and `dist\SHA256SUMS.txt` as assets
+   (REST API; there is no `gh` on the owner's PC). Do this first, so the download links exist.
 5. In the website repo: update `src/data/makeitcolor.ts` and `public/updates/makeitcolor.json` (version, released,
    notes, per-edition url/sha256/size), run `npm run verify`, commit and push.
 

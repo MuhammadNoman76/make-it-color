@@ -2,7 +2,8 @@
 #   powershell -ExecutionPolicy Bypass -File build.ps1                    # both installers -> dist\
 #   powershell -ExecutionPolicy Bypass -File build.ps1 -Editions x64      # just one
 #   powershell -ExecutionPolicy Bypass -File build.ps1 -SkipInstaller     # apps only -> publish\<edition>
-# Output: dist\MakeItColor-Setup-<version>-<edition>.exe and dist\SHA256SUMS.txt.
+# Output: dist\MakeItColor-Setup-<version>-<edition>.exe and dist\SHA256SUMS.txt. They are published as assets of the
+# GitHub release v<version> (assets may be up to 2 GB; the x64 installer is over the 100 MB limit for files in the repo).
 # The colour model isn't in the installer: the app downloads it on first use (SHA-256 checked).
 # FFmpeg comes from vendor\ffmpeg\<cpu> (tools\get-ffmpeg.ps1 fetches and checks it).
 param(
@@ -65,8 +66,6 @@ $setups = Get-ChildItem $dist -Filter "MakeItColor-Setup-$Version-*.exe" | Sort-
 $sums = $setups | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }
 Set-Content -Path (Join-Path $dist "SHA256SUMS.txt") -Value $sums -Encoding ASCII
 foreach ($s in $setups) {
-    $color = if ($s.Length -ge 100MB) { "Red" } else { "Green" }
-    Write-Host ("    {0}  {1:N0} bytes ({2:0.0} MB)" -f $s.Name, $s.Length, ($s.Length / 1MB)) -ForegroundColor $color
-    if ($s.Length -ge 100MB) { Write-Warning "$($s.Name) is over GitHub's 100 MB file limit." }
+    Write-Host ("    {0}  {1:N0} bytes ({2:0.0} MB)" -f $s.Name, $s.Length, ($s.Length / 1MB)) -ForegroundColor Green
 }
 Write-Host "Done: $dist" -ForegroundColor Green

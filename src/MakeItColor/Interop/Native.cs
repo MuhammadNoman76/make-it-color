@@ -296,4 +296,64 @@ internal static class Native
 
     [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
     public static extern int StrCmpLogicalW(string a, string b);
+
+    // ---------------------------------------------------------------------------- monitors
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorRect { public int Left, Top, Right, Bottom; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorInfo
+    {
+        public int Size;
+        public MonitorRect Monitor;
+        public MonitorRect Work;
+        public uint Flags;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct CursorPoint { public int X, Y; }
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromPoint(CursorPoint pt, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out CursorPoint pt);
+
+    [DllImport("user32.dll", EntryPoint = "GetMonitorInfoW")]
+    private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
+
+    [DllImport("shcore.dll")]
+    private static extern int GetDpiForMonitor(IntPtr monitor, int type, out uint dpiX, out uint dpiY);
+
+    /// <summary>
+    /// The work area (screen minus the taskbar) in device-independent pixels of the monitor that shows
+    /// <paramref name="hwnd"/>, or of the monitor under the mouse when it's zero. Null if Windows can't tell.
+    /// </summary>
+    public static System.Windows.Rect? WorkArea(IntPtr hwnd)
+    {
+        try
+        {
+            const uint nearest = 2;
+            IntPtr monitor;
+            if (hwnd != IntPtr.Zero) monitor = MonitorFromWindow(hwnd, nearest);
+            else
+            {
+                GetCursorPos(out var p);
+                monitor = MonitorFromPoint(p, nearest);
+            }
+            var info = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
+            if (monitor == IntPtr.Zero || !GetMonitorInfo(monitor, ref info)) return null;
+            var scale = GetDpiForMonitor(monitor, 0, out var dpi, out _) == 0 && dpi > 0 ? dpi / 96.0 : 1.0;
+            var w = info.Work;
+            return new System.Windows.Rect(w.Left / scale, w.Top / scale, (w.Right - w.Left) / scale, (w.Bottom - w.Top) / scale);
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

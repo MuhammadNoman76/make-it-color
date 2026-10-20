@@ -3,7 +3,7 @@
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:c="clr-namespace:MakeItColor.Controls"
                 xmlns:v="clr-namespace:MakeItColor.Views"
-                Title="MakeItColor" Width="1200" Height="800" MinWidth="880" MinHeight="600"
+                Title="MakeItColor" Width="1200" Height="800" MinWidth="560" MinHeight="460"
                 WindowStartupLocation="CenterScreen" AllowDrop="True">
     <c:FluentWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisible" />
@@ -53,7 +53,8 @@
                 <Image Width="38" Height="38" Source="{StaticResource Logo.Mark}" />
                 <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                     <TextBlock Style="{StaticResource Text.Subtitle}" Text="MakeItColor" />
-                    <TextBlock Style="{StaticResource Text.Caption}" Text="Black-and-white photos and videos, in colour. On your own PC." />
+                    <TextBlock x:Name="Tagline" Style="{StaticResource Text.Caption}" TextTrimming="CharacterEllipsis"
+                               Text="Black-and-white photos and videos, in colour and restored. On your own PC." />
                 </StackPanel>
             </StackPanel>
         </DockPanel>
@@ -87,22 +88,22 @@
                 <Rectangle x:Name="DropBorder" RadiusX="8" RadiusY="8" StrokeThickness="1.5" StrokeDashArray="5 4" SnapsToDevicePixels="True"
                            Stroke="{DynamicResource Control.StrongStroke}" Opacity="0.6" />
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24">
-                    <Image Width="96" Height="96" Source="{StaticResource Logo.Mark}" HorizontalAlignment="Center" />
-                    <TextBlock Margin="0,18,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Title}" TextAlignment="Center"
+                    <Image x:Name="HomeLogo" Width="96" Height="96" Source="{StaticResource Logo.Mark}" HorizontalAlignment="Center" />
+                    <TextBlock Margin="0,18,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Title}" TextAlignment="Center" TextWrapping="Wrap"
                                Text="Bring old photos and films back to colour" />
                     <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.BodySecondary}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="560"
-                               Text="Drop black-and-white photos, videos or a whole folder here, or choose them. The colour model runs on this PC: nothing is uploaded." />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,22,0,0">
+                               Text="Drop black-and-white photos, videos or a whole folder here, or choose them. The models run on this PC: nothing is uploaded." />
+                    <WrapPanel HorizontalAlignment="Center" Margin="0,22,0,0">
                         <Button Height="38" Style="{StaticResource AccentCommandButton}" c:Ui.Icon="{StaticResource Icon.ImageMultiple}"
                                 Content="Choose photos or videos" Click="OnOpen" ToolTip="Ctrl+O" />
                         <Button Height="38" Margin="8,0,0,0" Style="{StaticResource IconTextButton}" c:Ui.Icon="{StaticResource Icon.FolderOpen}"
                                 Content="Choose a folder" Click="OnOpenFolder" />
-                    </StackPanel>
-                    <TextBlock Margin="0,16,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Caption}" TextAlignment="Center"
+                    </WrapPanel>
+                    <TextBlock Margin="0,16,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Caption}" TextAlignment="Center" TextWrapping="Wrap"
                                Text="Photos: JPEG, PNG, TIFF, BMP, WebP, HEIC · Videos: MP4, MOV, MKV, AVI, WMV, WebM and more" />
                 </StackPanel>
             </Grid>
-            <UniformGrid Grid.Row="1" Columns="3" Margin="0,14,0,0">
+            <UniformGrid x:Name="InfoCards" Grid.Row="1" Columns="3" Margin="0,14,0,0">
                 <Border Style="{StaticResource Card}" Margin="0,0,6,0">
                     <DockPanel>
                         <c:IconView DockPanel.Dock="Left" Width="22" Height="22" VerticalAlignment="Top" Margin="0,1,12,0" Data="{StaticResource Icon.Processor}" Foreground="{DynamicResource Text.Accent}" />
@@ -114,10 +115,10 @@
                 </Border>
                 <Border Style="{StaticResource Card}" Margin="6,0">
                     <DockPanel>
-                        <c:IconView DockPanel.Dock="Left" Width="22" Height="22" VerticalAlignment="Top" Margin="0,1,12,0" Data="{StaticResource Icon.Video}" Foreground="{DynamicResource Text.Accent}" />
+                        <c:IconView DockPanel.Dock="Left" Width="22" Height="22" VerticalAlignment="Top" Margin="0,1,12,0" Data="{StaticResource Icon.Sparkle}" Foreground="{DynamicResource Text.Accent}" />
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Videos keep their sound" />
-                            <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,2,0,0" Text="Full resolution, steady colours from frame to frame, saved as MP4 next to the original." />
+                            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Restored, not just coloured" />
+                            <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,2,0,0" Text="Faded contrast fixed; blur, noise and JPEG damage taken out; small photos up to 4× larger. Videos keep their sound." />
                         </StackPanel>
                     </DockPanel>
                 </Border>
@@ -138,7 +139,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="16" />
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition x:Name="FilesColumn" Width="300" />
             </Grid.ColumnDefinitions>
 
             <Grid>
@@ -156,22 +157,36 @@
                         </StackPanel>
                     </Grid>
                 </Border>
-                <DockPanel Grid.Row="1" Margin="0,12,0,0" LastChildFill="False">
-                    <StackPanel x:Name="PhotoTools" DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                        <c:IconView Width="18" Height="18" Data="{StaticResource Icon.Sparkle}" Foreground="{DynamicResource Text.Secondary}" />
-                        <TextBlock Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="Enhance" />
-                        <CheckBox x:Name="EnhanceBox" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" AutomationProperties.Name="Enhance this photo"
-                                  ToolTip="Sharper and cleaner: takes out blur, noise and JPEG damage (and makes small photos larger, see Settings)"
-                                  Click="OnEnhanceClick" />
-                        <Rectangle Width="1" Height="20" Margin="18,0" Fill="{DynamicResource Divider}" />
-                        <c:IconView Width="18" Height="18" Data="{StaticResource Icon.Color}" Foreground="{DynamicResource Text.Secondary}" />
-                        <TextBlock Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="Colour strength" />
-                        <Slider x:Name="Vividness" Width="180" Minimum="0.5" Maximum="1.5" Value="1" SmallChange="0.05" LargeChange="0.1"
-                                VerticalAlignment="Center" AutomationProperties.Name="Colour strength" ValueChanged="OnVividnessChanged" />
-                        <TextBlock x:Name="VividnessText" Margin="10,0,0,0" Width="44" VerticalAlignment="Center" Style="{StaticResource Text.Caption}" Text="100%" />
-                        <Button Style="{StaticResource LinkButton}" Padding="4" Margin="2,0,0,0" Content="Reset" Click="OnVividnessReset" ToolTip="Back to the colours the model chose" />
-                    </StackPanel>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Grid x:Name="Toolbar" Grid.Row="1" Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!-- Two groups that wrap onto two lines when the window is narrow. -->
+                    <WrapPanel x:Name="PhotoTools" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal" Height="36" Margin="0,0,18,0">
+                            <c:IconView Width="18" Height="18" Data="{StaticResource Icon.Sparkle}" Foreground="{DynamicResource Text.Secondary}" />
+                            <TextBlock Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="Enhance" />
+                            <CheckBox x:Name="EnhanceBox" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" AutomationProperties.Name="Enhance this photo"
+                                      ToolTip="Sharper and cleaner: takes out blur, noise and JPEG damage (and makes small photos larger, see Settings)"
+                                      Click="OnEnhanceClick" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="36">
+                            <c:IconView Width="18" Height="18" Data="{StaticResource Icon.Color}" Foreground="{DynamicResource Text.Secondary}" ToolTip="Colour strength" />
+                            <TextBlock x:Name="VividnessLabel" Margin="8,0,2,0" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="Colour strength" />
+                            <Slider x:Name="Vividness" Width="180" Margin="8,0,0,0" Minimum="0.5" Maximum="1.5" Value="1" SmallChange="0.05" LargeChange="0.1"
+                                    VerticalAlignment="Center" AutomationProperties.Name="Colour strength" ValueChanged="OnVividnessChanged" />
+                            <TextBlock x:Name="VividnessText" Margin="10,0,0,0" Width="44" VerticalAlignment="Center" Style="{StaticResource Text.Caption}" Text="100%" />
+                            <Button Style="{StaticResource LinkButton}" Padding="4" Margin="2,0,0,0" VerticalAlignment="Center" Content="Reset" Click="OnVividnessReset" ToolTip="Back to the colours the model chose" />
+                        </StackPanel>
+                    </WrapPanel>
+                    <StackPanel x:Name="ActionButtons" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="RetryButton" Height="36" Style="{StaticResource AccentCommandButton}" c:Ui.Icon="{StaticResource Icon.Reset}"
+                                Content="Try again" Click="OnRetry" Visibility="Collapsed" />
                         <Button x:Name="CancelButton" Height="36" Style="{StaticResource IconTextButton}" c:Ui.Icon="{StaticResource Icon.Dismiss}"
                                 Content="Stop" Click="OnCancel" Visibility="Collapsed" ToolTip="Stop colouring this video" />
                         <Button x:Name="ShowButton" Height="36" Margin="8,0,0,0" Style="{StaticResource IconTextButton}" c:Ui.Icon="{StaticResource Icon.FolderOpen}"
@@ -181,7 +196,7 @@
                         <Button x:Name="SaveButton" Height="36" Margin="8,0,0,0" Style="{StaticResource AccentCommandButton}" c:Ui.Icon="{StaticResource Icon.Save}"
                                 Content="Save colour photo" Click="OnSave" Visibility="Collapsed" ToolTip="Ctrl+S" />
                     </StackPanel>
-                </DockPanel>
+                </Grid>
             </Grid>
 
             <DockPanel Grid.Column="2">

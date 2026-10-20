@@ -38,6 +38,7 @@ public class FluentWindow : Window
     {
         base.OnSourceInitialized(e);
         _hwnd = new WindowInteropHelper(this).Handle;
+        FitToScreen();
         if (IsDialog)
         {
             Native.MakeDialogFrame(_hwnd);
@@ -45,6 +46,42 @@ public class FluentWindow : Window
         }
         HwndSource.FromHwnd(_hwnd)?.AddHook(WndProc);
         ApplyBackdrop();
+    }
+
+    /// <summary>
+    /// Makes sure the window fits on its monitor (with display scaling a 1200 x 800 window can be larger than the
+    /// screen): too large a window is made smaller and centred again. Windows placed by code (screenshots) are left alone.
+    /// </summary>
+    private void FitToScreen()
+    {
+        if (WindowStartupLocation == WindowStartupLocation.Manual) return;
+        var owner = Owner != null ? new WindowInteropHelper(Owner).Handle : IntPtr.Zero;
+        if (Native.WorkArea(owner) is not { } area) area = SystemParameters.WorkArea;
+        const double margin = 16;
+        var maxWidth = Math.Max(320, area.Width - 2 * margin);
+        var maxHeight = Math.Max(240, area.Height - 2 * margin);
+        if (MinWidth > maxWidth) MinWidth = maxWidth;
+        if (MinHeight > maxHeight) MinHeight = maxHeight;
+        var shrunk = false;
+        if (SizeToContent is SizeToContent.Manual or SizeToContent.Height && !double.IsNaN(Width) && Width > maxWidth)
+        {
+            Width = maxWidth;
+            shrunk = true;
+        }
+        if (SizeToContent is SizeToContent.Manual or SizeToContent.Width && !double.IsNaN(Height) && Height > maxHeight)
+        {
+            Height = maxHeight;
+            shrunk = true;
+        }
+        if (SizeToContent != SizeToContent.Manual) MaxHeight = maxHeight;
+        if (shrunk || Owner == null)
+        {
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            var w = double.IsNaN(Width) ? ActualWidth : Width;
+            var h = double.IsNaN(Height) ? ActualHeight : Height;
+            Left = area.Left + Math.Max(0, (area.Width - w) / 2);
+            Top = area.Top + Math.Max(0, (area.Height - h) / 2);
+        }
     }
 
     private void OnThemeChanged()

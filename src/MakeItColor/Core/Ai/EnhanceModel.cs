@@ -186,17 +186,11 @@ internal static class EnhanceEngine
         }
     }
 
+    /// <summary>Forgets the loaded enhancer (after the processor setting changed). Never blocks the caller: the old
+    /// session is closed in the background once a tile that is running has finished.</summary>
     public static void Reset()
     {
-        Gate.Wait();
-        try
-        {
-            s_model?.Dispose();
-            s_model = null;
-        }
-        finally
-        {
-            Gate.Release();
-        }
+        var old = Interlocked.Exchange(ref s_model, null);
+        if (old != null) Task.Run(old.Dispose);
     }
 }

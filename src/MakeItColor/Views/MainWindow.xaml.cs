@@ -44,6 +44,8 @@ public partial class MainWindow : FluentWindow
         InputBindings.Add(new KeyBinding(new Command(() => OnSettings(this, new RoutedEventArgs())), Key.OemComma, ModifierKeys.Control));
         Closing += OnClosing;
         UpdateService.Changed += () => Dispatcher.BeginInvoke(ShowUpdate);
+        SizeChanged += (_, _) => Relayout();
+        Toolbar.SizeChanged += (_, _) => LayoutToolbar();
 
         // Get the model ready early (download and load in the background), so the first picture is quick.
         Loaded += async (_, _) =>
@@ -55,6 +57,39 @@ public partial class MainWindow : FluentWindow
                 catch (Exception ex) { ShowEngineStatus(ex.Message); }
             }
         };
+    }
+
+    // ---------------------------------------------------------------------------- fitting the window's size
+
+    /// <summary>Adapts the layout to the window's size, down to the smallest window (560 x 460).</summary>
+    private void Relayout()
+    {
+        double w = ActualWidth, h = ActualHeight;
+        if (w <= 0) return;
+        FilesColumn.Width = new GridLength(Math.Clamp(w * 0.24, 200, 300));
+        Tagline.Visibility = w < 700 ? Visibility.Collapsed : Visibility.Visible;
+        InfoCards.Columns = w >= 980 ? 3 : 1;
+        InfoCards.Visibility = w < 980 && h < 900 || h < 620 ? Visibility.Collapsed : Visibility.Visible;
+        HomeLogo.Visibility = h < 560 ? Visibility.Collapsed : Visibility.Visible;
+        LayoutToolbar();
+    }
+
+    /// <summary>The photo tools and the buttons share one row when there is room, otherwise the buttons go below.</summary>
+    private void LayoutToolbar()
+    {
+        var width = Toolbar.ActualWidth;
+        if (width <= 0) return;
+        var compact = width < 560;
+        VividnessLabel.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
+        Vividness.Width = compact ? 120 : 180;
+        var infinite = new Size(double.PositiveInfinity, double.PositiveInfinity);
+        PhotoTools.Measure(infinite);
+        ActionButtons.Measure(infinite);
+        var stacked = PhotoTools.DesiredSize.Width + ActionButtons.DesiredSize.Width + 16 > width;
+        System.Windows.Controls.Grid.SetRow(ActionButtons, stacked ? 1 : 0);
+        System.Windows.Controls.Grid.SetColumn(ActionButtons, stacked ? 0 : 1);
+        System.Windows.Controls.Grid.SetColumnSpan(ActionButtons, stacked ? 2 : 1);
+        ActionButtons.Margin = stacked ? new Thickness(0, 10, 0, 0) : new Thickness(0);
     }
 
     /// <summary>For screenshots (Capture).</summary>
@@ -233,6 +268,7 @@ public partial class MainWindow : FluentWindow
             Log.Error(ex, "Colour photo " + item.Path);
             item.State = ItemState.Failed;
             item.Status = "Couldn't colour this photo: " + ex.Message;
+            StatusText.Text = item.Status;
         }
         Show(item);
     }
@@ -247,6 +283,7 @@ public partial class MainWindow : FluentWindow
     {
         item.State = ItemState.Working;
         item.Status = "Opening…";
+        if (item.Cancel.IsCancellationRequested) item.Cancel = new CancellationTokenSource();
         item.OutputPath = OutputFor(item.Path);
         Show(item);
         var job = new VideoJob(item.Path, item.OutputPath);
@@ -276,6 +313,7 @@ public partial class MainWindow : FluentWindow
             Log.Error(ex, "Colour video " + item.Path);
             item.State = ItemState.Failed;
             item.Status = "Couldn't colour this video: " + ex.Message;
+            StatusText.Text = item.Status;
         }
         Show(item);
     }
@@ -361,6 +399,7 @@ public partial class MainWindow : FluentWindow
         PhotoTools.Visibility = photo is { IsDone: true } ? Visibility.Visible : Visibility.Hidden;
         SaveButton.Visibility = photo is { IsDone: true } ? Visibility.Visible : Visibility.Collapsed;
         CancelButton.Visibility = video is { IsWorking: true } ? Visibility.Visible : Visibility.Collapsed;
+        RetryButton.Visibility = item is { State: ItemState.Failed or ItemState.Cancelled } ? Visibility.Visible : Visibility.Collapsed;
         PlayButton.Visibility = ShowButton.Visibility = video is { IsDone: true } ? Visibility.Visible : Visibility.Collapsed;
         SaveAllButton.IsEnabled = _items.OfType<PhotoItem>().Count(p => p.IsDone) > 0;
         WorkingOverlay.Visibility = item is { IsWorking: true } ? Visibility.Visible : Visibility.Collapsed;
@@ -486,6 +525,22 @@ public partial class MainWindow : FluentWindow
             MessageDialog.Show(this, "Couldn't save the photo", ex.Message, "OK", icon: DialogIcon.Error);
             return false;
         }
+    }
+
+    /// <summary>Try again: a failed (or stopped) photo or video goes back in the queue.</summary>
+    private void OnRetry(object sender, RoutedEventArgs e)
+    {
+        if (List.SelectedItem is not WorkItem { State: ItemState.Failed or ItemState.Cancelled } item) return;
+        if (item is PhotoItem photo)
+        {
+            Redo(photo);
+            return;
+        }
+        item.State = ItemState.Waiting;
+        item.Status = "Waiting";
+        item.Progress = 0;
+        Show(item);
+        _ = ProcessQueueAsync();
     }
 
     private void OnCancel(object sender, RoutedEventArgs e)

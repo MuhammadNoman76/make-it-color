@@ -75,6 +75,6 @@ public sealed class VideoItem : WorkItem
 
     public override bool IsVideo => true;
 
-    internal CancellationTokenSource Cancel { get; } = new();
+    internal CancellationTokenSource Cancel { get; set; } = new();
     public string? OutputPath { get; set; }
 }

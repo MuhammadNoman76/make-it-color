@@ -85,8 +85,18 @@ internal static class ModelStore
         var sizeMb = model.Size / 1_000_000.0;
         status?.Report($"Downloading the {model.Name}: 0% of {sizeMb:0} MB (first time only)");
 
-        using var response = await Http.GetAsync(model.Url, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+        HttpResponseMessage response;
+        try
+        {
+            response = await Http.GetAsync(model.Url, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new HttpRequestException($"The {model.Name} couldn't be downloaded: no connection to github.com ({ex.Message}). Check the internet connection and press Try again.", ex);
+        }
+        using var _ = response;
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"The {model.Name} couldn't be downloaded (github.com answered {(int)response.StatusCode} {response.ReasonPhrase}). Press Try again in a while; if it keeps failing, get the latest MakeItColor from nomanshafiq.com/makeitcolor.");
 
         using var sha = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         await using (var input = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false))
