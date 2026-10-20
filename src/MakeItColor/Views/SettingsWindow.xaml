@@ -1,0 +1,166 @@
+<c:FluentWindow x:Class="MakeItColor.Views.SettingsWindow"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:c="clr-namespace:MakeItColor.Controls"
+                Title="Settings" Width="780" Height="760" MinWidth="540" MinHeight="420"
+                WindowStartupLocation="CenterOwner" IsDialog="True">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+        <StackPanel Margin="32,20,32,32">
+            <TextBlock Style="{StaticResource Text.Title}" Text="Settings" Margin="0,0,0,20" />
+
+            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Colouring" Margin="2,0,0,8" />
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Processor}" />
+                    <ComboBox x:Name="ProcessorBox" DockPanel.Dock="Right" Width="260" VerticalAlignment="Center" AutomationProperties.Name="Processor">
+                        <ComboBoxItem Content="Auto (NPU, then GPU, then CPU)" />
+                        <ComboBoxItem Content="NPU" />
+                        <ComboBoxItem Content="Graphics card (GPU)" />
+                        <ComboBoxItem Content="CPU" />
+                    </ComboBox>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Processor" />
+                        <TextBlock x:Name="ProcessorNote" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Video}" />
+                    <CheckBox x:Name="SteadyBox" DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" AutomationProperties.Name="Steady colours in videos" />
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Steady colours in videos" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="Where the picture doesn't change, colours are kept from one frame to the next instead of flickering" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Enhancing" Margin="2,20,0,8" />
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Sparkle}" />
+                    <CheckBox x:Name="ToneBox" DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" AutomationProperties.Name="Fix brightness and contrast" />
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Fix brightness and contrast" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="Faded and dull pictures get deep blacks and clean whites again. In videos it also takes out the flicker of old film" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Image}" />
+                    <CheckBox x:Name="EnhancePhotosBox" DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" AutomationProperties.Name="Enhance photos" />
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Enhance photos" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="A small AI model (Real-ESRGAN) takes out blur, noise and JPEG damage. A few seconds on the NPU or graphics card, longer on the CPU" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Resize}" />
+                    <ComboBox x:Name="PhotoSizeBox" DockPanel.Dock="Right" Width="260" VerticalAlignment="Center" AutomationProperties.Name="Size of enhanced photos">
+                        <ComboBoxItem Content="Auto (enlarge small photos)" />
+                        <ComboBoxItem Content="Same as the original" />
+                        <ComboBoxItem Content="2× larger" />
+                        <ComboBoxItem Content="4× larger" />
+                    </ComboBox>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Size of enhanced photos" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="Auto makes photos under 2000 pixels 2× or 4× larger with real detail; others keep their size. At most 24 megapixels" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Video}" />
+                    <ComboBox x:Name="VideoEnhanceBox" DockPanel.Dock="Right" Width="260" VerticalAlignment="Center" AutomationProperties.Name="Clean up videos">
+                        <ComboBoxItem Content="Auto" />
+                        <ComboBoxItem Content="Full (AI on every frame)" />
+                        <ComboBoxItem Content="Light (fast on any PC)" />
+                        <ComboBoxItem Content="Off" />
+                    </ComboBox>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Clean up videos" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="Full sharpens and cleans every frame with the AI model; Light takes out grain and sharpens gently. Auto: Full on an NPU or graphics card, Light on the CPU" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Saving" Margin="2,20,0,8" />
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Image}" />
+                    <ComboBox x:Name="FormatBox" DockPanel.Dock="Right" Width="260" VerticalAlignment="Center" AutomationProperties.Name="Photo format">
+                        <ComboBoxItem Content="PNG (lossless)" />
+                        <ComboBoxItem Content="JPEG (smaller)" />
+                    </ComboBox>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Photo format" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="Saved at full size: the original's, or the enhanced size" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.Save}" />
+                    <ComboBox x:Name="QualityBox" DockPanel.Dock="Right" Width="260" VerticalAlignment="Center" AutomationProperties.Name="Video quality">
+                        <ComboBoxItem Content="Standard (smaller file)" />
+                        <ComboBoxItem Content="High" />
+                        <ComboBoxItem Content="Best (largest file)" />
+                    </ComboBox>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Video quality" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="H.264 MP4 at the original size and frame rate, with the original sound, saved next to the original" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Appearance" Margin="2,20,0,8" />
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.DarkTheme}" />
+                    <ComboBox x:Name="ThemeBox" DockPanel.Dock="Right" Width="260" VerticalAlignment="Center" AutomationProperties.Name="App theme">
+                        <ComboBoxItem Content="Use my Windows setting" />
+                        <ComboBoxItem Content="Light" />
+                        <ComboBoxItem Content="Dark" />
+                    </ComboBox>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="App theme" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="Light or dark; the accent colour follows Windows" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Updates" Margin="2,20,0,8" />
+            <Border Style="{StaticResource SettingRow}">
+                <DockPanel>
+                    <c:IconView DockPanel.Dock="Left" Width="20" Height="20" Margin="2,0,16,0" Data="{StaticResource Icon.ArrowSync}" />
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="CheckNowButton" Height="32" Content="Check now" Click="OnCheckNow" />
+                        <CheckBox x:Name="AutoUpdateBox" Margin="16,0,0,0" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" AutomationProperties.Name="Check for updates automatically" />
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Style="{StaticResource Text.Body}" Text="Check for updates automatically" />
+                        <TextBlock x:Name="UpdateNote" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                   Text="About 10 seconds after start-up, then at most once a day. Only a small file is downloaded from nomanshafiq.com." />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="About" Margin="2,20,0,8" />
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock x:Name="AboutText" Style="{StaticResource Text.Body}" TextWrapping="Wrap" />
+                    <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                               Text="Colour model: MakeItColor, based on DDColor (ConvNeXt-L; Kang et al., Apache 2.0). Enhancer: Real-ESRGAN compact (Xintao Wang, BSD 3-Clause). Both converted to ONNX, run through Windows ML (ONNX Runtime, MIT). Videos use FFmpeg (LGPL 2.1). See THIRD-PARTY-NOTICES.txt in the program folder." />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Style="{StaticResource LinkButton}" Padding="2" Content="Website" Click="OnWebsite" />
+                        <Button Style="{StaticResource LinkButton}" Padding="2" Margin="16,0,0,0" Content="Source on GitHub" Click="OnSource" />
+                        <Button Style="{StaticResource LinkButton}" Padding="2" Margin="16,0,0,0" Content="Open the log folder" Click="OnLogs" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</c:FluentWindow>

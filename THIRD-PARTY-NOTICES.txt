@@ -1,0 +1,65 @@
+MakeItColor - third-party software notices
+==========================================
+
+MakeItColor (c) 2026 Muhammad Noman. It uses the following software and models.
+
+MakeItColor colour model (downloaded on first use, not part of the installer)
+  https://huggingface.co/muhammadnoman76/makeitcolor - Muhammad Noman, Apache License 2.0.
+  Based on DDColor (Kang et al., "DDColor: Towards Photo-Realistic Image Colorization via Dual Decoders", ICCV 2023,
+  https://github.com/piddnad/DDColor, Apache License 2.0) as packaged in ModelScope (Alibaba, Apache License 2.0).
+  Converted to ONNX (float16 and float32) by tools\model\convert.py; the conversion exports ConvNeXt's channels-first
+  LayerNorm as a LayerNormalization operator (the same maths) and bakes the spectral-norm weights.
+
+Enhancer model (folder: models\, makeitcolor-enhance-fp16.onnx and makeitcolor-enhance-fp32.onnx)
+  Real-ESRGAN "realesr-general-x4v3" and "realesr-general-wdn-x4v3" by Xintao Wang et al.
+  (https://github.com/xinntao/Real-ESRGAN), blended 50/50 as Real-ESRGAN does by default and converted to ONNX by
+  tools\model\enhance.py. The network definition (SRVGGNetCompact) is from BasicSR
+  (https://github.com/XPixelGroup/BasicSR, Apache License 2.0). Real-ESRGAN's license:
+
+  BSD 3-Clause License
+
+  Copyright (c) 2021, Xintao Wang
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products derived from
+     this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Windows ML / ONNX Runtime / DirectML (Microsoft.Windows.AI.MachineLearning)
+  Copyright (C) Microsoft Corporation. ONNX Runtime is licensed under the MIT License; DirectML and the Windows ML
+  runtime under Microsoft's license terms shipped with the package. NPU and GPU execution providers (for example
+  Intel OpenVINO) are downloaded and updated by Windows (Windows ML execution provider catalog); they are not part of
+  this app.
+
+FFmpeg (folder: ffmpeg\) - used to read and write videos
+  https://ffmpeg.org - licensed under the GNU Lesser General Public License version 2.1 or later (see
+  ffmpeg\LICENSE.txt). The unmodified LGPL shared build by BtbN (https://github.com/BtbN/FFmpeg-Builds), version 9.0.
+  Source code: https://github.com/FFmpeg/FFmpeg and https://github.com/BtbN/FFmpeg-Builds. The build includes
+  OpenH264 (Cisco, BSD 2-Clause).
+
+Fluent UI System Icons
+  Copyright (c) 2020 Microsoft Corporation - MIT License.
+
+.NET runtime and WPF
+  Copyright (C) .NET Foundation and Contributors - MIT License.

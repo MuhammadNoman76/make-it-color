@@ -1,0 +1,83 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        MakeItColor's logo on a 256 x 256 canvas: a photo (sun over hills) split on a diagonal, black and white on the
+        left, in colour on the right. tools\make-icon.ps1 renders the app icon from these drawings.
+        Logo.Mark is the detailed version (32 px and up), Logo.MarkSmall the simplified one for 16-24 px.
+    -->
+    <Geometry x:Key="Logo.Frame">M 56,40 L 200,40 C 218,40 232,54 232,72 L 232,184 C 232,202 218,216 200,216 L 56,216 C 38,216 24,202 24,184 L 24,72 C 24,54 38,40 56,40 Z</Geometry>
+    <Geometry x:Key="Logo.Back">M 24,170 C 60,130 92,128 128,150 C 160,170 196,150 232,120 L 232,216 L 24,216 Z</Geometry>
+    <Geometry x:Key="Logo.Front">M 24,196 C 70,160 112,168 150,186 C 180,200 210,192 232,178 L 232,216 L 24,216 Z</Geometry>
+    <EllipseGeometry x:Key="Logo.Sun" Center="168,96" RadiusX="24" RadiusY="24" />
+    <Geometry x:Key="Logo.ColorSide">M 150,0 L 256,0 L 256,256 L 98,256 Z</Geometry>
+    <Geometry x:Key="Logo.GraySide">M 0,0 L 150,0 L 98,256 L 0,256 Z</Geometry>
+
+    <LinearGradientBrush x:Key="Logo.Sky" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#3D8BFF" Offset="0" />
+        <GradientStop Color="#9AD0FF" Offset="0.75" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Logo.GraySky" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#5C5F66" Offset="0" />
+        <GradientStop Color="#B8BBC1" Offset="0.75" />
+    </LinearGradientBrush>
+
+    <DrawingImage x:Key="Logo.Mark">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="M 0,0 L 256,0 L 256,256 L 0,256 Z" />
+                <DrawingGroup ClipGeometry="{StaticResource Logo.Frame}">
+                    <DrawingGroup ClipGeometry="{StaticResource Logo.GraySide}">
+                        <GeometryDrawing Brush="{StaticResource Logo.GraySky}" Geometry="{StaticResource Logo.Frame}" />
+                        <GeometryDrawing Brush="#E4E5E8" Geometry="{StaticResource Logo.Sun}" />
+                        <GeometryDrawing Brush="#7C7F86" Geometry="{StaticResource Logo.Back}" />
+                        <GeometryDrawing Brush="#4A4D53" Geometry="{StaticResource Logo.Front}" />
+                    </DrawingGroup>
+                    <DrawingGroup ClipGeometry="{StaticResource Logo.ColorSide}">
+                        <GeometryDrawing Brush="{StaticResource Logo.Sky}" Geometry="{StaticResource Logo.Frame}" />
+                        <GeometryDrawing Brush="#FFC83D" Geometry="{StaticResource Logo.Sun}" />
+                        <GeometryDrawing Brush="#22A06B" Geometry="{StaticResource Logo.Back}" />
+                        <GeometryDrawing Brush="#0E7A4D" Geometry="{StaticResource Logo.Front}" />
+                    </DrawingGroup>
+                    <GeometryDrawing Geometry="M 150,0 L 98,256">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="White" Thickness="7" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                </DrawingGroup>
+                <GeometryDrawing Geometry="{StaticResource Logo.Frame}">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#26000000" Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- 16-24 px: no outline, a thicker divider. -->
+    <DrawingImage x:Key="Logo.MarkSmall">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="M 0,0 L 256,0 L 256,256 L 0,256 Z" />
+                <DrawingGroup ClipGeometry="{StaticResource Logo.Frame}">
+                    <DrawingGroup ClipGeometry="{StaticResource Logo.GraySide}">
+                        <GeometryDrawing Brush="{StaticResource Logo.GraySky}" Geometry="{StaticResource Logo.Frame}" />
+                        <GeometryDrawing Brush="#E4E5E8" Geometry="{StaticResource Logo.Sun}" />
+                        <GeometryDrawing Brush="#7C7F86" Geometry="{StaticResource Logo.Back}" />
+                        <GeometryDrawing Brush="#4A4D53" Geometry="{StaticResource Logo.Front}" />
+                    </DrawingGroup>
+                    <DrawingGroup ClipGeometry="{StaticResource Logo.ColorSide}">
+                        <GeometryDrawing Brush="{StaticResource Logo.Sky}" Geometry="{StaticResource Logo.Frame}" />
+                        <GeometryDrawing Brush="#FFC83D" Geometry="{StaticResource Logo.Sun}" />
+                        <GeometryDrawing Brush="#22A06B" Geometry="{StaticResource Logo.Back}" />
+                        <GeometryDrawing Brush="#0E7A4D" Geometry="{StaticResource Logo.Front}" />
+                    </DrawingGroup>
+                    <GeometryDrawing Geometry="M 150,0 L 98,256">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="White" Thickness="14" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+</ResourceDictionary>

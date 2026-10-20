@@ -1,0 +1,9 @@
+bin/
+obj/
+publish/
+dist/
+.work/
+vendor/ffmpeg/x64/
+vendor/ffmpeg/arm64/
+*.user
+.vs/

@@ -1,0 +1,15 @@
+FFmpeg for MakeItColor's videos
+===============================
+
+The app runs ffmpeg.exe / ffprobe.exe from its "ffmpeg" folder to read videos and write the colour versions.
+
+Build:    FFmpeg 9.0, LGPL shared build by BtbN (https://github.com/BtbN/FFmpeg-Builds), unmodified.
+Files:    ffmpeg-n9.0-latest-win64-lgpl-shared-9.0.zip     77,224,115 bytes
+          SHA-256 c1d4b6294001661303a82c36c9d4fcba39c25f3e228408e0e3f7959770c8bd83
+          ffmpeg-n9.0-latest-winarm64-lgpl-shared-9.0.zip  53,744,331 bytes
+          SHA-256 457c840e1d03aea0c4c004b45a6fe78aaa294c1fc5875072a7f63caafd89d52b
+          (downloaded 20 October 2026; copied to this repository's "ffmpeg-9.0" release)
+Kept:     bin\*.exe and *.dll except ffplay.exe, and LICENSE.txt (GNU LGPL 2.1 or later).
+Encoders: h264_mf (Windows Media Foundation, hardware where available), then libopenh264 (Cisco, BSD); AAC for sound.
+Source:   https://github.com/FFmpeg/FFmpeg (release/9.0) and https://github.com/BtbN/FFmpeg-Builds.
+Refresh:  powershell -ExecutionPolicy Bypass -File tools\get-ffmpeg.ps1

@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    MakeItColor: colorizes black-and-white photos and videos on the PC, with the NPU first, then the GPU, then the CPU.
+    Windows 10 (1903+) and 11, x64 and ARM64 (-r win-x64 / -r win-arm64), self-contained. The AI runs through
+    Windows ML (ONNX Runtime with the execution providers Windows has certified for the PC).
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>MakeItColor</AssemblyName>
+    <RootNamespace>MakeItColor</RootNamespace>
+    <ApplicationIcon>Assets\MakeItColor.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <Version>1.0.0</Version>
+    <Product>MakeItColor</Product>
+    <Company>MakeItColor</Company>
+    <Description>MakeItColor - color black-and-white photos and videos</Description>
+    <Copyright>Copyright © 2026 Muhammad Noman</Copyright>
+
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <!-- x64 or arm64: the updater downloads the same edition. build.ps1 passes -p:ColorEdition=...; otherwise it follows the CPU. -->
+  <PropertyGroup>
+    <ColorEdition Condition="'$(ColorEdition)' == '' and '$(RuntimeIdentifier)' == 'win-arm64'">arm64</ColorEdition>
+    <ColorEdition Condition="'$(ColorEdition)' == ''">x64</ColorEdition>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="Edition" Value="$(ColorEdition)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.AI.MachineLearning" Version="2.4.89" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\MakeItColor.ico" />
+    <Page Update="Assets\Logo.xaml" />
+    <EmbeddedResource Include="Assets\check-input.bin" LogicalName="check-input.bin" />
+    <EmbeddedResource Include="Assets\check-expected.bin" LogicalName="check-expected.bin" />
+    <EmbeddedResource Include="Assets\enhance-check-input.bin" LogicalName="enhance-check-input.bin" />
+    <EmbeddedResource Include="Assets\enhance-check-expected.bin" LogicalName="enhance-check-expected.bin" />
+    <!-- The enhancer (Real-ESRGAN compact, BSD-3-Clause; tools\model\enhance.py) ships with the app: 2.4 + 4.9 MB. -->
+    <None Include="Models\makeitcolor-enhance-fp16.onnx" Link="models\makeitcolor-enhance-fp16.onnx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="Models\makeitcolor-enhance-fp32.onnx" Link="models\makeitcolor-enhance-fp32.onnx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.txt" Link="THIRD-PARTY-NOTICES.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- FFmpeg (LGPL, unmodified, from vendor\ffmpeg\<cpu>) for videos; tools\get-ffmpeg.ps1 fetches it. -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' and Exists('..\..\vendor\ffmpeg\x64\ffmpeg.exe')">
+    <None Include="..\..\vendor\ffmpeg\x64\*" LinkBase="ffmpeg" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64' and Exists('..\..\vendor\ffmpeg\arm64\ffmpeg.exe')">
+    <None Include="..\..\vendor\ffmpeg\arm64\*" LinkBase="ffmpeg" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
