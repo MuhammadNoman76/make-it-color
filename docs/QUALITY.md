@@ -119,7 +119,13 @@ Frame-to-frame change over pixels that are static in the original (`.work/flicke
 | Full clean-up, no steady detail | 0.89 | 5.38 |
 | Full clean-up with steady detail | 0.81 | 5.30 |
 
-Video speed on that film (1280 × 720, 25 fps): Full about 1.5 frames a second, Light about 2.2.
+Video speed on that film (1280 × 720, 25 fps): Full about 1.5 frames a second, Light about 2.2. The whole 2:56 song
+(4,400 frames) took 59 minutes with Full clean-up and the brightness fix (1.24 frames a second, while other tests
+shared the laptop).
+
+**Limit found on that film:** colours can drift inside a moving shot. As a car drives toward the camera (0:13–0:17)
+the model's guess for its paint goes from silver-pink to maroon. Steady colours keeps colours only where the picture
+doesn't change, so it doesn't hold them on moving things. A dark close-up came out with a purple cast.
 
 ## 7. Brightness and contrast
 `Core/Tone.cs`: the levels at 0.5 % and 99.5 % are stretched toward 4 and 250 (8-bit), at most 1.8×, never less

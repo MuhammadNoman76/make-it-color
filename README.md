@@ -111,5 +111,6 @@ MakeItColor.exe --prepare            # download the colour model and compile it 
   See [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
 
 The colour model guesses plausible colours; it can't know the real ones. Skies, skin, grass and water usually come
-out right; clothes, cars and painted walls are often a guess. The enhancer draws plausible detail too: at 4× fine
+out right; clothes, cars and painted walls are often a guess, and in a moving shot a guess can drift (a car's paint
+changed from silver-pink to maroon as it drove toward the camera). The enhancer draws plausible detail too: at 4× fine
 textures such as rocks and leaves can look slightly painted.
